@@ -7,7 +7,7 @@ from skimage.measure import compare_ssim as ssim
 from skimage import img_as_float
 from scipy.misc import imsave
 
-SEARCH_TEXT = 'search or start new chat'
+SEARCH_TEXTS = {'search or start new chat', 'Buscar o empezar un chat nuevo'}
 CHAT_BAR_TEXT = 'Type a message'
 THRESHOLD = 220
 
@@ -55,7 +55,7 @@ def get_image(path):
     return Image.open(path)
 
 
-def get_coordinates(text_to_match, image_to_match):
+def get_coordinates(texts_to_match, image_to_match):
 
     screen = take_screen_shot()
     screen_width, screen_height = screen.size
@@ -84,7 +84,8 @@ def get_coordinates(text_to_match, image_to_match):
             binarized_img = binarize_image(cropped_img, THRESHOLD)
             text = pytesseract.image_to_string(binarized_img)
 
-            similarity += get_text_similarity(text, text_to_match)
+            for possible_text in texts_to_match:
+                similarity += get_text_similarity(text, possible_text)
 
             similarity = int(similarity*1000)
 
@@ -111,8 +112,6 @@ def find_search_bar():
     """
     :return: pair of coordinates to click on search bar.
     """
-    search_bar = get_image('search_bar.png')
-    text_to_match = SEARCH_TEXT
 
     # set threshold
     #binarized_img = binarize_image(search_bar, THRESHOLD)
@@ -120,7 +119,7 @@ def find_search_bar():
     #print('sample text: ' + sample_text)
     #print('sample text similarity: ' + str(get_text_similarity(sample_text)))
 
-    return get_coordinates(text_to_match, search_bar)
+    return get_coordinates(SEARCH_TEXTS, get_image('search_bar.png'))
 
 
 def find_contact(contact_name, search_area):
