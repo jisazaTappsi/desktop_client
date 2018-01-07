@@ -48,6 +48,7 @@ def get_text_similarity(text, text_to_match):
 def take_screen_shot():
     screen = ImageGrab.grab(bbox=None)
     screen.save('screen_shot.png')
+    screen.convert("RGBA")
     return screen
 
 
