@@ -7,6 +7,7 @@ from skimage.measure import compare_ssim as ssim
 from skimage import img_as_float
 from scipy.misc import imsave
 
+
 SEARCH_TEXTS = {'search or start new chat', 'Buscar o empezar un chat nuevo'}
 CHAT_BAR_TEXT = 'Type a message'
 THRESHOLD = 220
@@ -119,7 +120,7 @@ def find_search_bar():
     #print('sample text: ' + sample_text)
     #print('sample text similarity: ' + str(get_text_similarity(sample_text)))
 
-    return get_coordinates(SEARCH_TEXTS, get_image('search_bar.png'))
+    return get_coordinates(SEARCH_TEXTS, get_image('search_bar_es.png'))
 
 
 def find_contact(contact_name, search_area):
