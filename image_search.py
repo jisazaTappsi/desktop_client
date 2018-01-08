@@ -7,6 +7,7 @@ from skimage.measure import compare_ssim as ssim
 from skimage import img_as_float
 from scipy.misc import imsave
 
+
 SEARCH_TEXTS = {'search or start new chat', 'Buscar o empezar un chat nuevo'}
 CHAT_BAR_TEXT = 'Type a message'
 THRESHOLD = 220

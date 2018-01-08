@@ -12,7 +12,7 @@ os.environ['TK_LIBRARY'] = os.path.join(PYTHON_INSTALL_DIR, 'tcl', 'tk8.6')
 
 base = 'Win32GUI' if sys.platform == 'win32' else None
 
-additional_mods = ['numpy.core._methods', 'numpy.lib.format']
+additional_mods = ['numpy.core._methods', 'numpy.lib.format', 'scipy.ndimage._ni_support']
 executables = [Executable("start.py", base=base)]
 
 packages = ["idna"]
