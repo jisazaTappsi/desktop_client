@@ -101,7 +101,7 @@ def get_coordinates(texts_to_match, image_to_match):
 
             coordinate_y += int(image_height/2)
 
-        coordinate_x += int(image_width / 2)
+        coordinate_x += int(image_width / 3)
 
     best_img.save('best_img_{area}_{sim}.png'.format(area=best_area, sim=max_similarity))
 
