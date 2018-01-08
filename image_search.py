@@ -100,7 +100,7 @@ def get_coordinates(texts_to_match, image_to_match):
                 best_img = cropped_img
                 best_area = area
 
-            coordinate_y += int(image_height/2)
+            coordinate_y += int(image_height/3)
 
         coordinate_x += int(image_width / 3)
 
@@ -120,7 +120,7 @@ def find_search_bar():
     #print('sample text: ' + sample_text)
     #print('sample text similarity: ' + str(get_text_similarity(sample_text)))
 
-    return get_coordinates(SEARCH_TEXTS, get_image('search_bar_es.png'))
+    return get_coordinates(SEARCH_TEXTS, get_image('search_bar_en.png'))
 
 
 def find_contact(contact_name, search_area):
