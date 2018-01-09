@@ -10,10 +10,7 @@ def request_messages():
     response = requests.get('https://peaku.co/dashboard/send_messages')
 
     data = json.loads(response.text)
-    data = json.loads(data)
-    print(data)
-
-    return data['message'], data['users']
+    return json.loads(data)
 
 
 def get_random_interval():
@@ -45,8 +42,6 @@ def erase_search_bar(search_bar_coordinates):
 
 if __name__ == '__main__':
 
-    message, users = request_messages()
-
     screenWidth, screenHeight = pyautogui.size()
 
     search_bar_coordinates = image_search.find_search_bar()
@@ -56,9 +51,10 @@ if __name__ == '__main__':
 
     erase_search_bar(search_bar_coordinates)
 
-    for u in users:
+    for message in request_messages():
 
-        user_name = u['fields']['name'] + ' ' + str(u['pk'])
+        user_name = message['fields']['contact_name']
+        text = message['fields']['text']
 
         pyautogui.moveTo(*search_bar_coordinates)
 
@@ -70,7 +66,7 @@ if __name__ == '__main__':
         pyautogui.moveTo(*contact_coordinates)
         pyautogui.click(interval=1)
 
-        pyautogui.typewrite(message, interval=get_random_interval())
+        pyautogui.typewrite(text, interval=get_random_interval())
         pyautogui.press('enter')
 
         erase_search_bar(search_bar_coordinates)
