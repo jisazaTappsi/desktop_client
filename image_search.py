@@ -11,6 +11,7 @@ from scipy.misc import imsave
 SEARCH_TEXTS = {'search or start new chat', 'Buscar o empezar un chat nuevo'}
 CHAT_BAR_TEXT = 'Type a message'
 THRESHOLD = 220
+TOPS = 5
 
 
 def binarize_array(numpy_array, threshold=100):
@@ -29,8 +30,6 @@ def binarize_image(image, threshold):
     image = image.convert('L')  # convert image to monochrome
     image = np.array(image)
     arrays = binarize_array(image, threshold)
-    #min_value = min([min(a) for a in arrays])
-    #max_value = max([max(a) for a in arrays])
     imsave('binarized_image.jpg', arrays)
     return Image.open('binarized_image.jpg')#, min_value, max_value
 
@@ -56,57 +55,139 @@ def get_image(path):
     return Image.open(path)
 
 
-def get_coordinates(texts_to_match, image_to_match):
+def get_matrix(all_similarities, number_columns):
+    a = np.array(all_similarities)
+    a.shape = a.shape = (a.size // number_columns, number_columns)
+    return a
+
+
+def do_image_analysis(coordinate_x, coordinate_y, result):
+
+    coordinate1 = coordinate_x, coordinate_y
+    coordinate2 = coordinate1[0] + result.image_width, coordinate1[1] + result.image_height
+    area = coordinate1 + coordinate2
+
+    cropped_img = result.screen.crop(area)
+    #cropped_img.save('tmp.png')
+
+    similarity = ssim(img_as_float(result.image_to_match), img_as_float(cropped_img), multichannel=True)
+
+    binarized_img = binarize_image(cropped_img, THRESHOLD)
+    text = pytesseract.image_to_string(binarized_img)
+    print('image analysis done, reads: ' + text)
+
+    text_similarities = []
+    for possible_text in SEARCH_TEXTS:
+        text_similarities.append(get_text_similarity(text, possible_text))
+    similarity += max(text_similarities)
+
+    similarity = int(similarity * 1000)
+    result.all_similarities.append(similarity)
+
+    if result.max_similarity < similarity:
+        result.max_similarity = similarity
+        result.best_img = cropped_img
+        result.best_area = area
+
+    return result
+
+
+def show_results(result):
+
+    result.best_img.save('best_img_{area}_{sim}.png'.format(area=result.best_area, sim=result.max_similarity))
+
+    print('num cols: ' + str(result.get_num_columns()))
+    print('num rows: ' + str(result.get_num_rows()))
+
+
+def get_top_coordinates(result):
+
+    m = get_matrix(result.all_similarities, number_columns=result.get_num_columns())
+    max_y, max_x = m.shape
+    print(m)
+
+    tops = sorted(result.all_similarities)[-TOPS:]
+
+    for t in tops:
+        y_array, x_array = np.where(m == t)
+        x = x_array[0]
+        y = y_array[0]
+
+        # Search Neighbors.
+        from_x, from_y = result.get_pixels_for_coordinate(x-1, y-1, max_x, max_y)
+        to_x, to_y = result.get_pixels_for_coordinate(x+1, y+1, max_x, max_y)
+
+        result.increase_x = result.image_width/5
+        result.increase_y = result.image_height/5
+
+        result = scan_image_area(result, to_x=to_x, to_y=to_y, from_x=from_x, from_y=from_y)
+
+    return result
+
+
+class Result:
+
+    def __init__(self, increase_x, increase_y, image_to_match, screen):
+        self.increase_x = increase_x
+        self.increase_y = increase_y
+
+        self.image_to_match = image_to_match
+        self.image_width, self.image_height = image_to_match.size
+
+        self.screen = screen
+        self.screen_width, self.screen_height = screen.size
+
+        self.best_img = None
+        self.best_area = None
+        self.max_similarity = 0
+        self.all_similarities = []
+
+    def get_num_columns(self):
+        return self.screen_width//self.increase_x
+
+    def get_num_rows(self):
+        return self.screen_height//self.increase_y
+
+    def get_pixels_for_coordinate(self, column, row, total_columns, total_rows):
+        """Goes from matrix (column, row) to pixels."""
+        return int(column/total_columns*self.screen_width), int(row/total_rows*self.screen_height)
+
+
+def scan_image_area(result, to_x, to_y, from_x=0, from_y=0):
+
+    coordinate_y = from_y
+    while coordinate_y + result.image_height < to_y:
+
+        coordinate_x = from_x
+        while coordinate_x + result.image_width < to_x:
+            result = do_image_analysis(coordinate_x, coordinate_y, result)
+
+            coordinate_x += result.increase_x
+
+        coordinate_y += result.increase_y
+
+    return result
+
+
+def get_coordinates(image_to_match):
 
     screen = take_screen_shot()
-    screen_width, screen_height = screen.size
-
     image_width, image_height = image_to_match.size
 
-    best_img = None
-    best_area = None
-    max_similarity = 0
+    increase_y = int(image_height / 2)
+    increase_x = int(image_width / 1)
 
-    coordinate_x = 0
-    while coordinate_x + image_width < screen_width:
+    result = Result(increase_x, increase_y, image_to_match, screen)
 
-        coordinate_y = 0
-        while coordinate_y + image_height < screen_height:
+    result = scan_image_area(result, to_x=result.screen_width, to_y=result.screen_height)
 
-            coordinate1 = coordinate_x, coordinate_y
-            coordinate2 = coordinate1[0] + image_width, coordinate1[1] + image_height
-            area = coordinate1 + coordinate2
+    show_results(result)
 
-            cropped_img = screen.crop(area)
-            #cropped_img.save('auto_messenger/tmp.png')
+    result = get_top_coordinates(result)
 
-            similarity = ssim(img_as_float(image_to_match), img_as_float(cropped_img), multichannel=True)
+    show_results(result)
 
-            binarized_img = binarize_image(cropped_img, THRESHOLD)
-            text = pytesseract.image_to_string(binarized_img)
-
-            for possible_text in texts_to_match:
-                similarity += get_text_similarity(text, possible_text)
-
-            similarity = int(similarity*1000)
-
-            #print(similarity)
-
-            #if cropped_img:
-            #    cropped_img.save('tmp_best_img_{area}_{sim}.png'.format(area=area, sim=similarity))
-
-            if max_similarity < similarity:
-                max_similarity = similarity
-                best_img = cropped_img
-                best_area = area
-
-            coordinate_y += int(image_height/3)
-
-        coordinate_x += int(image_width / 3)
-
-    best_img.save('best_img_{area}_{sim}.png'.format(area=best_area, sim=max_similarity))
-
-    return (int(best_area[0] + best_area[2])/2), int((best_area[1] + best_area[3])/2)
+    return (int(result.best_area[0] + result.best_area[2])/2), int((result.best_area[1] + result.best_area[3])/2)
 
 
 def find_search_bar():
@@ -120,18 +201,4 @@ def find_search_bar():
     #print('sample text: ' + sample_text)
     #print('sample text similarity: ' + str(get_text_similarity(sample_text)))
 
-    return get_coordinates(SEARCH_TEXTS, get_image('search_bar_en.png'))
-
-
-def find_contact(contact_name, search_area):
-    """
-    :param contact_name:
-    :param search_area:
-    :return:
-    """
-    screen = take_screen_shot()
-    contact_height = 100
-
-    coor_y = search_area[1]
-    while coor_y + contact_height < screen.height:
-        pass
+    return get_coordinates(get_image('search_bar_en.png'))
