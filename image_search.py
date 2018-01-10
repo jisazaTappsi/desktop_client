@@ -117,8 +117,8 @@ def get_top_coordinates(result):
         from_x, from_y = result.get_pixels_for_coordinate(x-1, y-1, max_x, max_y)
         to_x, to_y = result.get_pixels_for_coordinate(x+1, y+1, max_x, max_y)
 
-        result.increase_x = result.image_width/5
-        result.increase_y = result.image_height/5
+        result.increase_x = result.image_width/7
+        result.increase_y = result.image_height/7
 
         result = scan_image_area(result, to_x=to_x, to_y=to_y, from_x=from_x, from_y=from_y)
 
@@ -156,10 +156,10 @@ class Result:
 def scan_image_area(result, to_x, to_y, from_x=0, from_y=0):
 
     coordinate_y = from_y
-    while coordinate_y + result.image_height < to_y:
+    while coordinate_y + result.increase_y < to_y:
 
         coordinate_x = from_x
-        while coordinate_x + result.image_width < to_x:
+        while coordinate_x + result.increase_x < to_x:
             result = do_image_analysis(coordinate_x, coordinate_y, result)
 
             coordinate_x += result.increase_x
@@ -175,7 +175,7 @@ def get_coordinates(image_to_match):
     image_width, image_height = image_to_match.size
 
     increase_y = int(image_height / 2)
-    increase_x = int(image_width / 1)
+    increase_x = int(image_width / 2)
 
     result = Result(increase_x, increase_y, image_to_match, screen)
 
