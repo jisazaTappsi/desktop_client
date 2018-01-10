@@ -201,4 +201,4 @@ def find_search_bar():
     #print('sample text: ' + sample_text)
     #print('sample text similarity: ' + str(get_text_similarity(sample_text)))
 
-    return get_coordinates(get_image('search_bar_en.png'))
+    return get_coordinates(get_image('search_bar_es.png'))
