@@ -1,8 +1,8 @@
 import json
-import random
 import requests
 import pyautogui
 import image_search
+import spanish_typewritter
 
 
 def request_messages():
@@ -11,16 +11,6 @@ def request_messages():
 
     data = json.loads(response.text)
     return json.loads(data)
-
-
-def get_random_interval():
-    """
-    Diguise automation
-    :return: interval between .25 and 1.25 second
-    """
-    # time for things to settle.
-    base = .25
-    return base + random.randint(0, 1000)/1000
 
 
 def erase_search_bar(search_bar_coordinates):
@@ -60,13 +50,13 @@ if __name__ == '__main__':
 
         pyautogui.click()
         pyautogui.click()
-        pyautogui.typewrite(user_name, interval=0.1)
+        spanish_typewritter.type(user_name)
 
         contact_coordinates = search_bar_coordinates[0], search_bar_coordinates[1] + contact_y_delta
         pyautogui.moveTo(*contact_coordinates)
         pyautogui.click(interval=1)
 
-        pyautogui.typewrite(text, interval=get_random_interval())
+        spanish_typewritter.type(text)
         pyautogui.press('enter')
 
         erase_search_bar(search_bar_coordinates)

@@ -7,10 +7,10 @@ EN_TO_ES = {'a': 'b'}
 def get_random_interval():
     """
     Disguise automation
-    :return: interval between .25 and .50 second
+    :return: interval between .1 and .35 second
     """
     # time for things to settle.
-    base = .25
+    base = .1
     return base + random.randint(0, 20)/100
 
 
@@ -23,9 +23,9 @@ def translate(text):
     return ''.join([translate_char(c) for c in text])
 
 
-def type(text):
+def type(text, interval=get_random_interval()):
     text = translate(text)
-    pyautogui.typewrite(text, interval=get_random_interval())
+    pyautogui.typewrite(text, interval=interval)
 
 
 if __name__ == '__main__':
