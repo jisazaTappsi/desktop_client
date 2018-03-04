@@ -44,4 +44,4 @@ if __name__ == '__main__':
     print(translate('anything!'))
 
     # test typewritter
-    type("http://loquesea.comZ")
+    type("http://loquesea.com")
