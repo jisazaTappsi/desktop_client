@@ -19,7 +19,15 @@ def translate_char(char):
     return EN_TO_ES.get(char, char)
 
 
+def fix_uppercase_bug(text):
+    if any([c.isupper() for c in text]):
+        return ''.join([c.lower() if c.isupper() else c.upper() for c in text])
+    else:
+        return text
+
+
 def translate(text):
+    text = fix_uppercase_bug(text)
     return ''.join([translate_char(c) for c in text])
 
 
