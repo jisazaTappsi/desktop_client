@@ -7,11 +7,11 @@ EN_TO_ES = {'-': '/', "'": '-', ':': 'º', }
 def get_random_interval():
     """
     Disguise automation
-    :return: interval between .1 and .35 second
+    :return: interval between .05 and .15 second
     """
     # time for things to settle.
-    base = .1
-    return base + random.randint(0, 20)/100
+    base = .05
+    return base + random.randint(0, 100)/1000
 
 
 def translate_char(char):
@@ -44,4 +44,4 @@ if __name__ == '__main__':
     print(translate('anything!'))
 
     # test typewritter
-    type("http://loquesea.com")
+    type("http://loquesea.comZ")
