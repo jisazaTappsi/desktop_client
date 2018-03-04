@@ -1,7 +1,7 @@
 import random
 import pyautogui
 
-EN_TO_ES = {'a': 'b'}
+EN_TO_ES = {'-': '/', "'": '-', ':': 'º', }
 
 
 def get_random_interval():
@@ -34,3 +34,6 @@ if __name__ == '__main__':
 
     # type anything:
     print(translate('anything!'))
+
+    # test typewritter
+    type("http://loquesea.com")
