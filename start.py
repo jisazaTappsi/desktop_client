@@ -3,7 +3,8 @@ import random
 import requests
 import pyautogui
 import image_search
-import spanish_typewritter
+
+pyautogui.PAUSE = 1
 
 
 def get_random_interval():
@@ -54,14 +55,15 @@ if __name__ == '__main__':
 
     for message in request_messages():
 
-        user_name = message['fields']['contact_name']
+        # Removes any double spacing
+        user_name = ' '.join(message['fields']['contact_name'].split())
         text = message['fields']['text']
 
         pyautogui.moveTo(*search_bar_coordinates)
 
         pyautogui.click()
         pyautogui.click()
-        spanish_typewritter.type(user_name)
+        pyautogui.typewrite(user_name, interval=get_random_interval())
 
         contact_coordinates = search_bar_coordinates[0], search_bar_coordinates[1] + contact_y_delta
         pyautogui.moveTo(*contact_coordinates)

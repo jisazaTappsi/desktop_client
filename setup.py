@@ -7,8 +7,13 @@ import sys
 
 
 PYTHON_INSTALL_DIR = os.path.dirname(os.path.dirname(os.__file__))
+print(PYTHON_INSTALL_DIR)
 os.environ['TCL_LIBRARY'] = os.path.join(PYTHON_INSTALL_DIR, 'tcl', 'tcl8.6')
 os.environ['TK_LIBRARY'] = os.path.join(PYTHON_INSTALL_DIR, 'tcl', 'tk8.6')
+
+# Another option if not working
+#os.environ['TCL_LIBRARY'] = r'C:\Program Files\Python35-32\tcl\tcl8.6'
+#os.environ['TK_LIBRARY'] = r'C:\Program Files\Python35-32\tcl\tk8.6'
 
 base = 'Win32GUI' if sys.platform == 'win32' else None
 
