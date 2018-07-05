@@ -37,5 +37,7 @@ if __name__ == '__main__':
     print(translate('anything!'))
 
     # test typewritter
+
     type('')
+
 

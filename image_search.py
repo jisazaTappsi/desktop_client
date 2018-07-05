@@ -6,7 +6,13 @@ from PIL import ImageGrab
 from skimage.measure import compare_ssim as ssim
 from skimage import img_as_float
 from scipy.misc import imsave
-import platform
+
+
+from sys import platform
+if platform == "win32":
+    # When windows is not finding the fucking tesseract.
+    pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files (x86)/Tesseract-OCR/tesseract'
+
 
 SEARCH_TEXTS = {'search or start new chat', 'Buscar o empezar un chat nuevo'}
 CHAT_BAR_TEXT = 'Type a message'
