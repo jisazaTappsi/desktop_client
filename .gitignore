@@ -102,3 +102,6 @@ ENV/
 
 .idea
 
+best_img*.png
+
+tmp.png

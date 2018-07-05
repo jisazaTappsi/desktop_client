@@ -6,7 +6,7 @@ from PIL import ImageGrab
 from skimage.measure import compare_ssim as ssim
 from skimage import img_as_float
 from scipy.misc import imsave
-
+import platform
 
 SEARCH_TEXTS = {'search or start new chat', 'Buscar o empezar un chat nuevo'}
 CHAT_BAR_TEXT = 'Type a message'
@@ -68,10 +68,11 @@ def do_image_analysis(coordinate_x, coordinate_y, result):
     area = coordinate1 + coordinate2
 
     cropped_img = result.screen.crop(area)
-    #cropped_img.save('tmp.png')
+    cropped_img.save('tmp.png')
 
     similarity = ssim(img_as_float(result.image_to_match), img_as_float(cropped_img), multichannel=True)
-
+    if platform.system() == 'Windows':
+        pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files (x86)/Tesseract-OCR/tesseract'
     binarized_img = binarize_image(cropped_img, THRESHOLD)
     text = pytesseract.image_to_string(binarized_img)
     print('image analysis done, reads: ' + text)

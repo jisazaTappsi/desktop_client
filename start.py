@@ -34,8 +34,8 @@ if __name__ == '__main__':
 
     screenWidth, screenHeight = pyautogui.size()
 
-    search_bar_coordinates = image_search.find_search_bar()
-    #search_bar_coordinates = (848, 99)
+    # search_bar_coordinates = image_search.find_search_bar()
+    search_bar_coordinates = (31, 137)
 
     contact_y_delta = 120
 

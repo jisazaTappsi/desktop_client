@@ -1,7 +1,8 @@
 import random
 import pyautogui
 
-EN_TO_ES = {'-': '/', "'": '-', ':': 'º', }
+# EN_TO_ES = {'-': '/', "'": '-', ':': 'º', }
+EN_TO_ES = {}
 
 
 def get_random_interval():
@@ -10,8 +11,8 @@ def get_random_interval():
     :return: interval between .05 and .15 second
     """
     # time for things to settle.
-    base = .05
-    return base + random.randint(0, 100)/1000
+    base = .02
+    return base + random.randint(0, 30)/1000
 
 
 def translate_char(char):
@@ -19,19 +20,11 @@ def translate_char(char):
     return EN_TO_ES.get(char, char)
 
 
-def fix_uppercase_bug(text):
-    if any([c.isupper() for c in text]):
-        return ''.join([c.lower() if c.isupper() else c.upper() for c in text])
-    else:
-        return text
-
-
 def translate(text):
-    text = fix_uppercase_bug(text)
     return ''.join([translate_char(c) for c in text])
 
 
-def type(text, interval=get_random_interval()):
+def type(text: object, interval: object = get_random_interval()):
     text = translate(text)
     pyautogui.typewrite(text, interval=interval)
 
@@ -44,4 +37,5 @@ if __name__ == '__main__':
     print(translate('anything!'))
 
     # test typewritter
-    type("http://loquesea.comZ")
+    type('')
+
