@@ -3,6 +3,7 @@ import random
 import requests
 import pyautogui
 import image_search
+from desktop_client import spanish_typewritter
 
 pyautogui.PAUSE = 1
 
@@ -13,13 +14,14 @@ def get_random_interval():
     :return: interval between .05 and .15 second
     """
     # time for things to settle.
-    base = .05
-    return base + random.randint(0, 100)/1000
+    base = .02
+    return base + random.randint(0, 30)/1000
 
 
 def request_messages():
 
     response = requests.get('https://peaku.co/dashboard/send_messages')
+    response.encoding = 'ISO-8859-1'
 
     data = json.loads(response.text)
     return json.loads(data)
@@ -47,7 +49,7 @@ if __name__ == '__main__':
     screenWidth, screenHeight = pyautogui.size()
 
     # search_bar_coordinates = image_search.find_search_bar()
-    search_bar_coordinates = (31, 137)
+    search_bar_coordinates = (848, 99)
 
     contact_y_delta = 120
 
@@ -69,7 +71,7 @@ if __name__ == '__main__':
         pyautogui.moveTo(*contact_coordinates)
         pyautogui.click(interval=1)
 
-        pyautogui.typewrite(text, interval=get_random_interval())
+        spanish_typewritter.type(text)
         pyautogui.press('enter')
 
         erase_search_bar(search_bar_coordinates)

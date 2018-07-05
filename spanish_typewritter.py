@@ -1,3 +1,4 @@
+import pyperclip
 import random
 import pyautogui
 
@@ -26,7 +27,8 @@ def translate(text):
 
 def type(text: object, interval: object = get_random_interval()):
     text = translate(text)
-    pyautogui.typewrite(text, interval=interval)
+    pyperclip.copy(text)
+    pyautogui.hotkey("ctrl", "v")
 
 
 if __name__ == '__main__':
@@ -37,7 +39,4 @@ if __name__ == '__main__':
     print(translate('anything!'))
 
     # test typewritter
-
-    type('')
-
-
+    type('avión con mucás tíldés')
