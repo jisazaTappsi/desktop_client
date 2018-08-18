@@ -1,14 +1,14 @@
 import distance
 import pytesseract
 import numpy as np
-from PIL import Image
-from PIL import ImageGrab
 from skimage.measure import compare_ssim as ssim
 from skimage import img_as_float
 from scipy.misc import imsave
 
-
 from sys import platform
+import util
+
+
 if platform == "win32":
     # When windows is not finding the fucking tesseract.
     pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files (x86)/Tesseract-OCR/tesseract'
@@ -49,16 +49,6 @@ def get_text_similarity(text, text_to_match):
     #distance.nlevenshtein("abc", "acd", method=2)  # longest alignment
     #distance.sorensen("decide", "resize")
     #distance.jaccard("decide", "resize")
-
-
-def take_screen_shot():
-    screen = ImageGrab.grab(bbox=None)
-    screen.save('screen_shot.png')
-    return screen.convert("RGBA")
-
-
-def get_image(path):
-    return Image.open(path)
 
 
 def get_matrix(all_similarities, number_columns):
@@ -178,7 +168,7 @@ def scan_image_area(result, to_x, to_y, from_x=0, from_y=0):
 
 def get_coordinates(image_to_match):
 
-    screen = take_screen_shot()
+    screen = util.take_screen_shot()
     image_width, image_height = image_to_match.size
 
     increase_y = int(image_height / 2)
@@ -208,4 +198,4 @@ def find_search_bar():
     #print('sample text: ' + sample_text)
     #print('sample text similarity: ' + str(get_text_similarity(sample_text)))
 
-    return get_coordinates(get_image('search_bar_es.png'))
+    return get_coordinates(util.get_image('search_bar_es.png'))

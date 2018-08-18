@@ -3,7 +3,7 @@ import random
 import requests
 import pyautogui
 import image_search
-from desktop_client import spanish_typewritter
+import spanish_typewritter
 
 pyautogui.PAUSE = 1
 
@@ -55,7 +55,12 @@ if __name__ == '__main__':
 
     erase_search_bar(search_bar_coordinates)
 
-    for message in request_messages():
+    message_queue = [m for m in request_messages()]
+
+    while len(message_queue) > 0:
+
+        message = message_queue[0]
+        message_queue = message_queue[1:]
 
         # Removes any double spacing
         user_name = ' '.join(message['fields']['contact_name'].split())
