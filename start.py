@@ -1,11 +1,14 @@
 import json
+import time
 import random
 import requests
 import pyautogui
-import image_search
 import spanish_typewritter
+import util
+from cts import *
 
 pyautogui.PAUSE = 1
+CONTACT_DELTA_Y = 120
 
 
 def get_random_interval():
@@ -27,9 +30,9 @@ def request_messages():
     return json.loads(data)
 
 
-def erase_search_bar(search_bar_coordinates):
+def erase_search_bar(coordinates):
 
-    pyautogui.moveTo(*search_bar_coordinates)
+    pyautogui.moveTo(*coordinates)
 
     pyautogui.click(interval=0.1)
     pyautogui.click(interval=0.1)
@@ -44,39 +47,40 @@ def erase_search_bar(search_bar_coordinates):
     pyautogui.press('backspace')
 
 
-if __name__ == '__main__':
+def send_message(message):
+    # Removes any double spacing
+    user_name = ' '.join(message['fields']['contact_name'].split())
+    text = message['fields']['text']
 
-    screenWidth, screenHeight = pyautogui.size()
+    pyautogui.moveTo(*SEARCH_BAR_COORDINATES)
 
-    # search_bar_coordinates = image_search.find_search_bar()
-    search_bar_coordinates = (848, 99)
+    pyautogui.click()
+    pyautogui.click()
+    pyautogui.typewrite(user_name, interval=get_random_interval())
 
-    contact_y_delta = 120
+    contact_coordinates = SEARCH_BAR_COORDINATES[0], SEARCH_BAR_COORDINATES[1] + CONTACT_DELTA_Y
+    pyautogui.moveTo(*contact_coordinates)
+    pyautogui.click(interval=1)
 
-    erase_search_bar(search_bar_coordinates)
+    spanish_typewritter.type(text)
+    pyautogui.press('enter')
 
+    erase_search_bar(SEARCH_BAR_COORDINATES)
+
+
+def run():
+    erase_search_bar(SEARCH_BAR_COORDINATES)
     message_queue = [m for m in request_messages()]
 
     while len(message_queue) > 0:
 
-        message = message_queue[0]
-        message_queue = message_queue[1:]
+        # checks each second for a new message
+        time.sleep(1)
+        if util.messenger_running(SEARCH_BAR_COORDINATES):
+            message = message_queue[0]
+            message_queue = message_queue[1:]
+            send_message(message)
 
-        # Removes any double spacing
-        user_name = ' '.join(message['fields']['contact_name'].split())
-        text = message['fields']['text']
 
-        pyautogui.moveTo(*search_bar_coordinates)
-
-        pyautogui.click()
-        pyautogui.click()
-        pyautogui.typewrite(user_name, interval=get_random_interval())
-
-        contact_coordinates = search_bar_coordinates[0], search_bar_coordinates[1] + contact_y_delta
-        pyautogui.moveTo(*contact_coordinates)
-        pyautogui.click(interval=1)
-
-        spanish_typewritter.type(text)
-        pyautogui.press('enter')
-
-        erase_search_bar(search_bar_coordinates)
+if __name__ == '__main__':
+    run()
